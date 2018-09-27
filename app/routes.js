@@ -40,7 +40,7 @@ var cheerio = require('cheerio');
 
 var net = new brain.NeuralNetwork();
 
-const trainingData=[
+ const trainingData=[
     {
         input:"Dogs are cool",
         output: {like:1}
@@ -54,7 +54,7 @@ const trainingData=[
         output:{like:1}
     }  
 
-];
+]; 
 
 
 
@@ -64,7 +64,7 @@ function encode(arg) {
     return arg.split('').map(x => (x.charCodeAt(0) / 256));
 }
 
-/* function processTrainingData(data) {
+ function processTrainingData(data) {
     return data.map(d => {
         return {
             input: encode(d.input),
@@ -72,7 +72,7 @@ function encode(arg) {
         }
     })
 }
- */
+ 
 function train(data) {
     let net = new brain.NeuralNetwork();
     net.train(processTrainingData(data));
@@ -80,6 +80,7 @@ function train(data) {
 };
 
 function execute(input) {
+    console.log(input);
     let results = trainedNet(encode(input));
     console.log(results)
     return results;
@@ -93,7 +94,7 @@ function execute(input) {
 
     return "I'm " + certainty + "% sure that tweet was written by " + output; */
 }
-function processTrainingData(data) {
+/* function processTrainingData(data) {
     return data.map(d => {
         console.log("Pumpkin",d);
         return {
@@ -101,29 +102,19 @@ function processTrainingData(data) {
             output: {like:1}
         }
     })
-}
+} */
 
 //train(trainingData);
 //console.log(execute("Cats are dope"));
 
 
 module.exports = function(app, passport) {
-
-    app.get('/animal', function(req, res) {
-        res.render('zoo.hbs',{
-            roar:"PurrrR",
-            cond:false
-        });
-    });
    
     app.get('/medium',isLoggedIn,async function(req,res){ 
         console.log(req.query, req.params);
         let articles=await Article.find({
             userId:req.user._id
         }).exec();
-
-        
-        console.log(articles.length);
 
         if(articles.length>0){
             train(articles);
@@ -136,14 +127,19 @@ module.exports = function(app, passport) {
                 const $ = cheerio.load(html);
                 
                 if(articles.length>0){
-                    $('h3').each(function(e){
-                    console.log(execute($(this).text()));
-                    console.log($(this).text());
-                }); 
-                }
+                    $('.section-inner').each(function(e){
+                        let results=execute($(this).find('h3').text());
+                        
+                        $(this).append(`<div>${Math.floor(results.like*100)}%</div>`);
+                        //console.log(this);
+                        console.log($(this).find('h3').text());
+                        console.log(results);
+                    
+                    }); 
+                }                
                 
                 let temp=$('.section-inner').append("<button>Push me</button>");
-                $('.section-inner').prepend("<div>75%</div>");
+                //$('.section-inner').prepend("<div>75%</div>");
                 
                 let section=$('.section-inner');
                 //console.log(section);

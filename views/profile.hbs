@@ -1,11 +1,6 @@
 
 <div class="container">
 
-    {{#each articles}}
-    <h3>{{this.headerText}}</h3>
-    <img src={{this.headerImage}} />
-    {{/each}}
-
     <div class="page-header text-center">
         <h1><span class="fa fa-anchor"></span> Profile Page</h1>
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>
@@ -98,6 +93,27 @@
 
             </div>
         </div>
+    </div>
+
+    <div class="container">
+        <h2>Liked article content</h2>
+        
+        {{#each articles as |article index|}}
+            {{#ifIsNthItem nth=3 }}
+                <div class="row">
+            {{/ifIsNthItem}}
+
+            <div class="col-sm">
+                <h3>{{this.headerText}}</h3>
+                <img src={{this.headerImage}} />
+            </div> 
+            
+            {{#ifIsNthItem nth=3 }}
+                </div>
+            {{/ifIsNthItem}}
+
+        {{/each}}
+
     </div>
 
     <div class="text-center">
